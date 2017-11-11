@@ -264,20 +264,27 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
-    var obj1 = arguments[0];
-    var objs = arguments.slice(1);
     
-    _.each(objs, function(item) {
+    _.each(arguments, function(item) {
       _.each(item, function(value, key) {
-        obj1[key] = value;
+        obj[key] = value;
       });
     });
-    return obj1;
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+
+    _.each(arguments, function(item) {
+      _.each(item, function(value, key) {
+        if (obj[key] === undefined) {
+          obj[key] = value;
+        }
+      });
+    });
+    return obj;
   };
 
 
@@ -303,7 +310,7 @@
     return function() {
       if (!alreadyCalled) {
         // TIP: .apply(this, arguments) is the standard way to pass on all of the
-        // infromation from one function call to another.
+        // information from one function call to another.
         result = func.apply(this, arguments);
         alreadyCalled = true;
       }
@@ -330,6 +337,10 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    setTimeout(function() {
+      func.apply(this, args);
+    }, wait);
   };
 
 
@@ -344,6 +355,13 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var arr2 = [];
+
+    _.each(array, function(item) {
+      var randomNum = Math.floor(Math.random() * (array.length));
+      arr2.splice(randomNum, 0, item);
+    });
+    return arr2;
   };
 
 
